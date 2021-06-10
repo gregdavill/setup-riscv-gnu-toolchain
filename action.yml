@@ -1,0 +1,9 @@
+name: Setup RISCV GNU Toolchain
+description: Set up RISCV GNU toolchain and add the command-line tools to the PATH
+author: GitHub
+branding:
+  color: purple
+  icon: cpu
+runs:
+  using: node12
+  main: dist/index.js

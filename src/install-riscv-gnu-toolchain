@@ -1,0 +1,13 @@
+#!/bin/bash
+
+set -eo pipefail
+
+cd $RUNNER_TEMP
+
+mkdir -p .setup-riscv-gnu-toolchain
+pushd .setup-riscv-gnu-toolchain
+build=`echo 'https://static.dev.sifive.com/dev-tools/freedom-tools/v2020.12/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14.tar.gz'`
+wget $build -O build.tar.gz
+tar xfz build.tar.gz
+rm build.tar.gz
+popd
