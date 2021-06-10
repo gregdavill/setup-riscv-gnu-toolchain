@@ -8,7 +8,12 @@ main().catch(err => {
 
 async function installRISCVGNUToolchain() {
   if (process.platform === 'linux') {
-    await exec(path.join(__dirname, 'install-riscv-gnu-toolchain'))
+    let version = core.getInput('riscv-gnu-version')
+    if (version == null)
+      await exec(path.join(__dirname, 'install-riscv-gnu-toolchain'))
+    else 
+      await exec(path.join(__dirname, 'install-riscv-gnu-toolchain'), [version])
+      
   }
 }
 
@@ -19,7 +24,7 @@ async function main() {
 
   await installRISCVGNUToolchain()
   console.log(`##[endgroup]`)
-  core.addPath(`${process.env.RUNNER_TEMP}/.setup-riscv-gnu-toolchain/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin`)
+  core.addPath(`${process.env.RUNNER_TEMP}/.setup-riscv-gnu-toolchain/bin`)
 }
 
 function checkPlatform() {

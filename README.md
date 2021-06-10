@@ -11,7 +11,7 @@ Using latest release
 steps:
 - uses: actions/checkout@v2
 - uses: gregdavill/setup-riscv-gnu-toolchain@v1
-- run: riscv64-unknown-elf-gcc --version
+- run: riscv-none-embed-gcc --version
 ```
 
 # License
