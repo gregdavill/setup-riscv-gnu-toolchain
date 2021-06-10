@@ -1,4 +1,4 @@
-name: Setup RISCV GNU Toolchain
+name: Setup riscv gnu/gcc toolchain
 description: Set up RISCV GNU toolchain and add the command-line tools to the PATH
 author: GitHub
 branding:
