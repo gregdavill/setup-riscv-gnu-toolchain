@@ -11,7 +11,7 @@ if [ -n "$1" ]; then
 else
     build=`curl -s https://api.github.com/repos/xpack-dev-tools/riscv-none-embed-gcc-xpack/releases/latest | grep browser_download_url | grep linux-x64 | cut -f4 -d\"`
 fi
-wget $build -O build.tgz
+wget -q $build -O build.tgz
 tar xfz build.tgz --strip-components=1
 rm build.tgz
 popd
