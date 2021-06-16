@@ -1,6 +1,6 @@
 # setup-riscv-gnu-toolchain
 
-This action sets up a [RISCV GNU toolchain](https://github.com/sifive/freedom-tools/release) environment for use in actions by:
+This action sets up a [RISCV GNU toolchain](https://github.com/sifive/freedom-tools/releases) environment for use in actions by:
 
 - downloading a version of RISCV GNU toolchain and adding to PATH
 
