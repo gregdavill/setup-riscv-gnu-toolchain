@@ -1,9 +1,12 @@
-name: Setup riscv gnu/gcc toolchain
-description: Set up RISCV GNU toolchain and add the command-line tools to the PATH
+name: Install xpack riscv gnu/gcc toolchain
+description: Set up xPack RISCV GNU toolchain and add the command-line tools to the PATH
 author: GitHub
 branding:
   color: purple
   icon: cpu
+inputs:
+  version:
+    description: Version of exact version of xPack riscv gcc to use
 runs:
-  using: node12
+  using: node16
   main: dist/index.js

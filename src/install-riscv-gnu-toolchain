@@ -1,17 +1,44 @@
 #!/bin/bash
 
-set -eo pipefail
+if [ "win32" != "$1" ]; then
+set -o pipefail
+fi
 
 cd $RUNNER_TEMP
 
+GITHUB_TOKEN_AUTH=""
+if [ -n "$GITHUB_TOKEN" ]; then
+GITHUB_TOKEN_AUTH=`echo "-H 'Authorization: Bearer ${GITHUB_TOKEN}'"`
+fi
+
 mkdir -p .setup-riscv-gnu-toolchain
 pushd .setup-riscv-gnu-toolchain
-if [ -n "$1" ]; then
-    build=`curl -s https://api.github.com/repos/xpack-dev-tools/riscv-none-embed-gcc-xpack/releases/tags/$1 | grep browser_download_url | grep linux-x64 | grep -v sha | cut -f4 -d\"`
-else
-    build=`curl -s https://api.github.com/repos/xpack-dev-tools/riscv-none-embed-gcc-xpack/releases/latest | grep browser_download_url | grep linux-x64 | grep -v sha | cut -f4 -d\"`
+for i in {1..5}
+do
+    if [ -n "$2" ] && [ "$2" != "latest" ]; then
+        build=`curl -s  -H \"Accept: application/json\" $GITHUB_TOKEN_AUTH -L https://api.github.com/repos/xpack-dev-tools/riscv-none-elf-gcc-xpack/releases/tags/$2 | grep browser_download_url | grep $1-x64 | grep -v sha | cut -f4 -d\"`
+    else
+        build=`curl -s  -H \"Accept: application/json\" $GITHUB_TOKEN_AUTH -L https://api.github.com/repos/xpack-dev-tools/riscv-none-elf-gcc-xpack/releases/latest | grep browser_download_url | grep $1-x64 | grep -v sha | cut -f4 -d\"`
+    fi
+    if [ -n "$build" ]; then
+        break 
+    fi
+    sleep 20
+done
+
+if [ -z "$build" ]; then
+    exit -1 
 fi
-wget -q $build -O build.tgz
-tar xfz build.tgz --strip-components=1
+echo $build 
+
+curl --retry 5 --retry-delay 10 --retry-all-errors -L $build --output build.tgz
+file build.tgz
+if [ "win32" == "$1" ]; then
+    unzip -q build.tgz
+    mv xpack-riscv-none-elf-gcc*/* .; rmdir xpack-riscv-none-elf-gcc*/
+else
+    tar xfz build.tgz --strip-components=1
+fi
+ls
 rm build.tgz
 popd

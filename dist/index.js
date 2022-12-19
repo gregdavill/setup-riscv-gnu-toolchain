@@ -1752,33 +1752,27 @@ main().catch(err => {
 })
 
 async function installRISCVGNUToolchain() {
-    if (process.platform === 'linux') {
-        let version = core.getInput('riscv-gnu-version')
-        if (version == null)
-        await exec(path.join(__dirname, 'install-riscv-gnu-toolchain'))
-        else 
-        await exec(path.join(__dirname, 'install-riscv-gnu-toolchain'), [version])
-    
-    }
-}
-
-async function main() {
-    checkPlatform()
-
+    console.log(process.platform)
+    if (process.platform === 'linux' || process.platform == 'darwin' || process.platform == 'win32') {
+        let version = core.getInput('version')
+        let os = process.platform
+  
+        if (version == null){
+          await exec('bash', [path.join(__dirname, 'install-riscv-gnu-toolchain'), os])
+        }
+        else {
+          await exec('bash', [path.join(__dirname, 'install-riscv-gnu-toolchain'), os, version])
+        }
+    } 
+  }
+  
+  async function main() {
     console.log(`##[group]Installing RISCV GNU Toolchain`)
-
     await installRISCVGNUToolchain()
+    
     console.log(`##[endgroup]`)
     core.addPath(`${process.env.RUNNER_TEMP}/.setup-riscv-gnu-toolchain/bin`)
-}
-
-function checkPlatform() {
-    if (process.platform !== 'linux')
-        throw new Error(
-        '@actions/setup-riscv-gnu-toolchain only supports Ubuntu Linux at this time'
-        )
-}
-  
+  }
 
 })();
 

@@ -1,0 +1,61 @@
+name: Build & Test Action
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - ci
+      - 'releases/*'
+
+jobs:
+  # Run this Action with all GCC versions, in all OS
+  test-all-releases:
+    strategy:
+      max-parallel: 1
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        release:
+          - 'latest'
+          - 'v12.2.0-1'
+          - 'v11.3.0-1'
+    name: Test ${{ matrix.release }} @ ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v3
+    - name: Ensure the compiler is not present (Unix)
+      if: runner.os != 'Windows'
+      run: '! riscv-none-elf-gcc --version'
+    - name: Set up GCC Arm Compiler
+      uses: ./
+      with:
+        version: ${{ matrix.release }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Print out programs invoked by the compiler
+      run: riscv-none-elf-gcc -v
+      shell: bash
+    - name: Print out version
+      run: riscv-none-elf-gcc --version
+      shell: bash
+    - name: Check the version matches
+      if: |
+        (!contains(matrix.release, '2012') && !contains(matrix.release, '2013') && !contains(matrix.release, '2014')
+        && !contains(matrix.release, '2015') && !contains(matrix.release, '2016') && (matrix.release != 'latest'))
+      run: riscv-none-elf-gcc --version | grep -q $(echo "${{ matrix.release }}" | cut -d '-' -f1 | grep -o "[\.0-9]*")
+      shell: bash
+
+  # Run Action without inputs
+  test-default:
+    name: Test default options
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Ensure the compiler is not present
+      run: '! riscv-none-elf-gcc --version'
+    - name: Set up GCC Arm Compiler with default options
+      uses: ./
+      id: action-under-test-id
+    - name: Print out version
+      run: riscv-none-elf-gcc --version
