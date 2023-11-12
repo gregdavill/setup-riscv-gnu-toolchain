@@ -8,24 +8,27 @@ cd $RUNNER_TEMP
 
 GITHUB_TOKEN_AUTH=""
 if [ -n "$GITHUB_TOKEN" ]; then
-GITHUB_TOKEN_AUTH=`echo "-H \"Authorization: Bearer ${GITHUB_TOKEN}\""`
+GITHUB_TOKEN_AUTH=("--header" "Authorization: Bearer ${GITHUB_TOKEN}")
 fi
 
 mkdir -p .setup-riscv-gnu-toolchain
 pushd .setup-riscv-gnu-toolchain
 
 if [ -n "$2" ] && [ "$2" != "latest" ]; then
-    build=`curl -s  -H \"Accept: application/json\" $GITHUB_TOKEN_AUTH -L https://api.github.com/repos/xpack-dev-tools/riscv-none-elf-gcc-xpack/releases/tags/$2 | grep browser_download_url | grep $1-x64 | grep -v sha | cut -f4 -d\"`
+    build=$(curl -v --header "Accept: application/json" "${GITHUB_TOKEN_AUTH[@]}" -L https://api.github.com/repos/xpack-dev-tools/riscv-none-elf-gcc-xpack/releases/tags/$2 | grep browser_download_url | grep $1-x64 | grep -v sha | cut -f4 -d\")
 else
-    build=`curl -s  -H \"Accept: application/json\" $GITHUB_TOKEN_AUTH -L https://api.github.com/repos/xpack-dev-tools/riscv-none-elf-gcc-xpack/releases/latest | grep browser_download_url | grep $1-x64 | grep -v sha | cut -f4 -d\"`
+    build=$(curl -v --header "Accept: application/json" "${GITHUB_TOKEN_AUTH[@]}" -L https://api.github.com/repos/xpack-dev-tools/riscv-none-elf-gcc-xpack/releases/latest | grep browser_download_url | grep $1-x64 | grep -v sha | cut -f4 -d\")
 fi
 
-if [ -z "$build" ]; then
+if [ -z "${build}" ]; then
+    echo "No suitable file found"
     exit -1 
 fi
-echo $build 
 
-curl $GITHUB_TOKEN_AUTH -L $build --output build.tgz
+echo "Downloading: ${build}" 
+$(curl -S "${GITHUB_TOKEN_AUTH[@]}" -L "${build}" --output build.tgz)
+
+
 file build.tgz
 if [ "win32" == "$1" ]; then
     unzip -q build.tgz
