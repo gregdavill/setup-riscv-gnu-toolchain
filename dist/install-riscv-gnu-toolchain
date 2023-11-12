@@ -8,7 +8,7 @@ cd $RUNNER_TEMP
 
 GITHUB_TOKEN_AUTH=""
 if [ -n "$GITHUB_TOKEN" ]; then
-GITHUB_TOKEN_AUTH=`echo "-H 'Authorization: Bearer ${GITHUB_TOKEN}'"`
+GITHUB_TOKEN_AUTH=`echo "-H \"Authorization: Bearer ${GITHUB_TOKEN}\""`
 fi
 
 mkdir -p .setup-riscv-gnu-toolchain
