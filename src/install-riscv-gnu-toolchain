@@ -26,8 +26,11 @@ if [ -z "${build}" ]; then
 fi
 
 echo "Downloading: ${build}" 
+if [ -n "$GITHUB_TOKEN" ]; then
 $(curl -S "${GITHUB_TOKEN_AUTH[@]}" -L "${build}" --output build.tgz)
-
+else
+$(curl -S -L "${build}" --output build.tgz)
+fi
 
 file build.tgz
 if [ "win32" == "$1" ]; then
