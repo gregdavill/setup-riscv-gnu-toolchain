@@ -8,7 +8,7 @@ Using latest release
 ```yaml
 steps:
 - uses: gregdavill/setup-riscv-gnu-toolchain@v2
-- run: riscv-none-embed-gcc --version
+- run: riscv-none-elf-gcc --version
 ```
 
 Using specific release
@@ -17,7 +17,7 @@ steps:
 - uses: gregdavill/setup-riscv-gnu-toolchain@v2
   with:
     version: 11.3.0-1
-- run: riscv-none-embed-gcc --version
+- run: riscv-none-elf-gcc --version
 ```
 
 # License
